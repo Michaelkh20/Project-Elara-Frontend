@@ -1,0 +1,21 @@
+{
+  "name": "project-elara-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd mock_backend && npm install && cd ../project_elara && npm install -force && npm run build",
+    "start": "node mock_backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Michaelkh20@github.com/Michaelkh20/Project-Elara-Frontend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Michaelkh20/Project-Elara-Frontend/issues"
+  },
+  "homepage": "https://github.com/Michaelkh20/Project-Elara-Frontend#readme"
+}
