@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useContext, useEffect, useReducer } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
@@ -31,6 +31,7 @@ function ProductScreen() {
   const navigate = useNavigate();
   const params = useParams();
   const { slug } = params;
+  const [selectedImage, setSelectedImage] = useState('');
 
   const [{ loading, error, product }, dispatch] = useReducer(reducer, {
     product: [],
@@ -80,7 +81,11 @@ function ProductScreen() {
   ) : (
     <Row>
       <Col md={6}>
-        <img className="img-large" src={product.image} alt={product.name}></img>
+        <img
+          className="img-large"
+          src={selectedImage || product.image}
+          alt={product.name}
+        ></img>
       </Col>
       <Col md={3}>
         <ListGroup variant="flush">
@@ -94,6 +99,24 @@ function ProductScreen() {
             <Rating rating={product.rating} numReviews={product.numReviews} />
           </ListGroup.Item>
           <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
+          <ListGroup.Item>
+            <Row xs={1} md={2} className="g-2">
+              {[product.image, ...product.images].map((img) => (
+                <Col key={img}>
+                  <Card>
+                    <Button
+                      className="thumbnail"
+                      type="button"
+                      variant="light"
+                      onClick={() => setSelectedImage(img)}
+                    >
+                      <Card.Img variant="top" src={img} alt="product" />
+                    </Button>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </ListGroup.Item>
           <ListGroup.Item>
             Description:
             <p>{product.description}</p>

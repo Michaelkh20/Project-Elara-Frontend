@@ -131,7 +131,9 @@ export default function UserEditScreen() {
             id="isAdmin"
             label="isAdmin"
             checked={isAdmin}
-            onChange={(e) => setIsAdmin(e.target.value)}
+            onChange={(e) => {
+              setIsAdmin(e.target.checked);
+            }}
           />
 
           <div className="mb-3">
