@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { useEffect, useReducer, useState } from 'react';
-import logger from 'use-reducer-logger';
+import { useEffect, useReducer } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Product from '../components/Product';
@@ -22,7 +21,7 @@ const reducer = (state, action) => {
 };
 
 function HomeScreen() {
-  const [{ loading, error, products }, dispatch] = useReducer(logger(reducer), {
+  const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     products: [],
     loading: true,
     error: '',
@@ -30,16 +29,20 @@ function HomeScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: 'FETCH_REQUEST' });
       try {
+        dispatch({ type: 'FETCH_REQUEST' });
+
         const result = await axios.get('/api/products');
+
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: error.message });
       }
     };
+
     fetchData();
   }, []);
+
   return (
     <div>
       <Helmet>

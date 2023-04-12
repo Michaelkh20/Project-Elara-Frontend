@@ -70,6 +70,7 @@ const ratings = [
 export default function SearchScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
+
   const sp = new URLSearchParams(search);
   const category = sp.get('category') || 'all';
   const query = sp.get('query') || 'all';
@@ -77,6 +78,8 @@ export default function SearchScreen() {
   const rating = sp.get('rating') || 'all';
   const order = sp.get('order') || 'newest';
   const page = sp.get('page') || 1;
+
+  const [categories, setCategories] = useState([]);
 
   const [{ loading, error, products, pages, countProducts }, dispatch] =
     useReducer(reducer, {
@@ -87,9 +90,12 @@ export default function SearchScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get(
           `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
         );
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
@@ -99,31 +105,32 @@ export default function SearchScreen() {
     fetchData();
   }, [category, order, page, price, query, rating]);
 
-  const [categories, setCategories] = useState([]);
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(`/api/products/categories`);
+
         setCategories(data);
       } catch (error) {
         toast.error(getError(error));
       }
     };
+
     fetchCategories();
   }, [dispatch]);
 
-  const getFilterUrl = (filter, skipPathname) => {
+  function getFilterUrl(filter, skipPathname) {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
     const filterQuery = filter.query || query;
     const filterRating = filter.rating || rating;
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
+
     return `${
       skipPathname ? '' : '/search?'
     }page=${filterPage}&query=${filterQuery}&category=${filterCategory}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}`;
-  };
+  }
 
   return (
     <div>

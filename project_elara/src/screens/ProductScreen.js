@@ -13,12 +13,15 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { Store } from '../Store';
+import { toast } from 'react-toastify';
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_REQUEST':
+      console.log(state);
       return { ...state, loading: true };
     case 'FETCH_SUCCESS':
+      console.log(state);
       return { ...state, product: action.payload, loading: false };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
@@ -29,31 +32,34 @@ const reducer = (state, action) => {
 
 function ProductScreen() {
   const navigate = useNavigate();
-  const params = useParams();
-  const { slug } = params;
+  const { slug } = useParams();
+
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { cart } = state;
+
   const [selectedImage, setSelectedImage] = useState('');
 
   const [{ loading, error, product }, dispatch] = useReducer(reducer, {
-    product: [],
+    product: {},
     loading: true,
     error: '',
   });
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: 'FETCH_REQUEST' });
       try {
+        dispatch({ type: 'FETCH_REQUEST' });
+
         const result = await axios.get(`/api/products/slug/${slug}`);
+
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
       }
     };
+
     fetchData();
   }, [slug]);
-
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { cart } = state;
 
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
@@ -62,7 +68,7 @@ function ProductScreen() {
     const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (data.countInStock < quantity) {
-      window.alert('Sorry. Product is out of stock');
+      toast.error('Sorry. Product is out of stock');
       return;
     }
 

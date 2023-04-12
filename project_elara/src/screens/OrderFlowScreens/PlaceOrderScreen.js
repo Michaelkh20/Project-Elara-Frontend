@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer } from 'react';
-import CheckoutSteps from '../components/CheckoutSteps';
+import CheckoutSteps from '../../components/CheckoutSteps';
 import { Helmet } from 'react-helmet-async';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -7,11 +7,11 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { Store } from '../Store';
+import { Store } from '../../Store';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError } from '../../utils';
 import axios from 'axios';
-import LoadingBox from '../components/LoadingBox';
+import LoadingBox from '../../components/LoadingBox';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -33,8 +33,10 @@ export default function PlaceOrderScreen() {
     loading: false,
   });
 
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { cart, userInfo } = state;
+  const {
+    state: { cart, userInfo },
+    dispatch: ctxDispatch,
+  } = useContext(Store);
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
@@ -70,6 +72,7 @@ export default function PlaceOrderScreen() {
       ctxDispatch({ type: 'CART_CLEAR' });
       dispatch({ type: 'CREATE_SUCCESS' });
       localStorage.removeItem('cartItems');
+
       navigate(`/order/${data.order._id}`);
     } catch (error) {
       dispatch({ type: 'CREATE_FAIL' });

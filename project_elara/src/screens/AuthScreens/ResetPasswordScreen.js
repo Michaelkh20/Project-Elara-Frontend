@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Store } from '../Store';
+import { Store } from '../../Store';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError } from '../../utils';
 import Container from 'react-bootstrap/Container';
 import { Helmet } from 'react-helmet-async';
 import Button from 'react-bootstrap/Button';

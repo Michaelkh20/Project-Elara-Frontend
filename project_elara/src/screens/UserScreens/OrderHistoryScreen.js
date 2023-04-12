@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 import { Helmet } from 'react-helmet-async';
-import LoadingBox from '../components/LoadingBox';
-import MessageBox from '../components/MessageBox';
-import { Store } from '../Store';
+import LoadingBox from '../../components/LoadingBox';
+import MessageBox from '../../components/MessageBox';
+import { Store } from '../../Store';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { getError } from '../utils';
+import { getError } from '../../utils';
 import Button from 'react-bootstrap/Button';
 
 const reducer = (state, action) => {
@@ -34,12 +34,13 @@ export default function OrderHistoryScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: 'FETCH_REQUEST' });
-
       try {
+        dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get(`/api/orders/mine`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });

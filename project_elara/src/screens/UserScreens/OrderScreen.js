@@ -6,11 +6,11 @@ import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { Store } from '../Store';
-import { getError } from '../utils';
+import { Store } from '../../Store';
+import { getError } from '../../utils';
 import axios from 'axios';
-import LoadingBox from '../components/LoadingBox';
-import MessageBox from '../components/MessageBox';
+import LoadingBox from '../../components/LoadingBox';
+import MessageBox from '../../components/MessageBox';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 
@@ -45,12 +45,13 @@ const reducer = (state, action) => {
 
 export default function OrderScreen() {
   const navigate = useNavigate();
+  const params = useParams();
+  const { id: orderId } = params;
 
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const params = useParams();
-  const { id: orderId } = params;
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
   const [
     {
@@ -70,8 +71,6 @@ export default function OrderScreen() {
     loadingPay: false,
     successPay: false,
   });
-
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
   function createOrder(data, actions) {
     return actions.order
@@ -116,9 +115,11 @@ export default function OrderScreen() {
     const fetchOrder = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get(`/api/orders/${orderId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
@@ -136,6 +137,7 @@ export default function OrderScreen() {
       (order._id && order._id !== orderId)
     ) {
       fetchOrder();
+
       if (successPay) {
         dispatch({ type: 'PAY_RESET' });
       }
@@ -158,6 +160,7 @@ export default function OrderScreen() {
 
         paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
       };
+
       loadPaypalScript();
     }
   }, [
@@ -173,6 +176,7 @@ export default function OrderScreen() {
   async function deliverOrderHandler() {
     try {
       dispatch({ type: 'DELIVER_REQUEST' });
+
       const { data } = await axios.put(
         `/api/orders/${orderId}/deliver`,
         {},
@@ -180,6 +184,7 @@ export default function OrderScreen() {
           headers: { authorization: `Bearer ${userInfo.token}` },
         }
       );
+
       dispatch({ type: 'DELIVER_SUCCESS', payload: data });
       toast.success('Order is delivered');
     } catch (error) {

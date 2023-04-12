@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { Store } from '../Store';
+import { Store } from '../../Store';
 import { useNavigate } from 'react-router-dom';
-import CheckoutSteps from '../components/CheckoutSteps';
+import CheckoutSteps from '../../components/CheckoutSteps';
 
 export default function ShippingAddressScreen() {
   const navigate = useNavigate();
-  const { state, dispatch: ctxDispatch } = useContext(Store);
 
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
     userInfo,
     cart: { shippingAddress },
@@ -31,6 +31,7 @@ export default function ShippingAddressScreen() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+
     ctxDispatch({
       type: 'SAVE_SHIPPING_ADDRESS',
       payload: {

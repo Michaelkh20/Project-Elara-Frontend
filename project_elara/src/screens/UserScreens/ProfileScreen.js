@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useReducer, useState } from 'react';
-import { Store } from '../Store';
+import React, { useContext, useReducer, useState } from 'react';
+import { Store } from '../../Store';
 import { Helmet } from 'react-helmet-async';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError } from '../../utils';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -22,19 +21,12 @@ const reducer = (state, action) => {
 };
 
 export default function ProfileScreen() {
-  const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
 
-  // useEffect(() => {
-  //   if (!userInfo) {
-  //     navigate('/signin?redirect=/profile');
-  //   }
-  // }, [userInfo, navigate]);
-
+  // TODO: Password confirmation
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
-
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
