@@ -12,8 +12,7 @@ import { getError } from '../../utils';
 export default function SigninScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
-  const redirectInUrl = new URLSearchParams(search).get('redirect');
-  const redirect = redirectInUrl || '/';
+  const redirect = new URLSearchParams(search).get('redirect') || '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,26 +20,28 @@ export default function SigninScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post('/api/users/signin', {
-        email,
-        password,
-      });
-      ctxDispatch({ type: 'USER_SIGNIN', payload: data });
-      localStorage.setItem('userInfo', JSON.stringify(data));
-      navigate(redirect || '/');
-    } catch (error) {
-      toast.error(getError(error));
-    }
-  };
-
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
     }
   }, [navigate, redirect, userInfo]);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await axios.post('/api/users/signin', {
+        email,
+        password,
+      });
+
+      ctxDispatch({ type: 'USER_SIGNIN', payload: data });
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      navigate(redirect);
+    } catch (error) {
+      toast.error(getError(error));
+    }
+  };
 
   return (
     <Container className="small-container">

@@ -32,14 +32,11 @@ const reducer = (state, action) => {
 
 export default function UserEditScreen() {
   const navigate = useNavigate();
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo } = state;
+  const params = useParams();
+  const { id: userId } = params;
 
-  // useEffect(() => {
-  //   if (!userInfo) {
-  //     navigate('/signin?redirect=/profile');
-  //   }
-  // }, [userInfo, navigate]);
+  const { state } = useContext(Store);
+  const { userInfo } = state;
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -50,16 +47,15 @@ export default function UserEditScreen() {
     error: '',
   });
 
-  const params = useParams();
-  const { id: userId } = params;
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get(`/api/users/${userId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
         setName(data.name);
         setEmail(data.email);
         setIsAdmin(data.isAdmin);
@@ -89,6 +85,7 @@ export default function UserEditScreen() {
 
       dispatch({ type: 'UPDATE_SUCCESS' });
       toast.success('User updated successfully');
+
       navigate('/admin/users');
     } catch (error) {
       dispatch({ type: 'UPDATE_FAIL' });

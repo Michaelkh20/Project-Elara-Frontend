@@ -46,6 +46,9 @@ const reducer = (state, action) => {
 
 export default function ProductListScreen() {
   const navigate = useNavigate();
+  const { search } = useLocation();
+  const page = new URLSearchParams(search).get('page') || 1;
+
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -65,18 +68,15 @@ export default function ProductListScreen() {
     error: '',
   });
 
-  const { search, pathname } = useLocation();
-  const sp = new URLSearchParams(search);
-  const page = sp.get('page') || 1;
-
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: 'FETCH_REQUEST' });
-
       try {
+        dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get(`/api/products/admin?page=${page}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
@@ -97,6 +97,7 @@ export default function ProductListScreen() {
 
     try {
       dispatch({ type: 'CREATE_REQUEST' });
+
       const { data } = await axios.post(
         '/api/products',
         {},
@@ -104,12 +105,14 @@ export default function ProductListScreen() {
           headers: { authorization: `Bearer ${userInfo.token}` },
         }
       );
-      toast.success('Product created successfully');
+
       dispatch({ type: 'CREATE_SUCCESS' });
+      toast.success('Product created successfully');
+
       navigate(`/admin/product/${data.product._id}`);
     } catch (error) {
-      toast.error(getError(error));
       dispatch({ type: 'CREATE_FAIL' });
+      toast.error(getError(error));
     }
   };
 
@@ -125,11 +128,11 @@ export default function ProductListScreen() {
         headers: { authorization: `Bearer ${userInfo.token}` },
       });
 
-      toast.success('Product deleted successfully');
       dispatch({ type: 'DELETE_SUCCESS' });
+      toast.success('Product deleted successfully');
     } catch (error) {
-      toast.error(getError(error));
       dispatch({ type: 'DELETE_FAIL' });
+      toast.error(getError(error));
     }
   };
 

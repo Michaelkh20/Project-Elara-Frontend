@@ -13,11 +13,11 @@ export default function ResetPasswordScreen() {
   const navigate = useNavigate();
   const { token } = useParams();
 
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
   const { state } = useContext(Store);
   const { userInfo } = state;
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     if (userInfo || !token) {
@@ -27,15 +27,18 @@ export default function ResetPasswordScreen() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
+
     try {
       const { data } = await axios.post('/api/users/reset-password', {
         password,
         token,
       });
+
       toast.success('Password updated successfully');
       navigate('/signin');
     } catch (error) {

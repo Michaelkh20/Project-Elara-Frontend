@@ -146,6 +146,7 @@ export default function OrderScreen() {
       }
     } else {
       const loadPaypalScript = async () => {
+        // TODO: Move PAYPAL key to frontend
         const { data: clientId } = await axios.get('/api/keys/paypal', {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });

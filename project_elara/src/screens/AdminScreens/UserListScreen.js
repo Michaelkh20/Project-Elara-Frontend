@@ -3,11 +3,9 @@ import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../../components/LoadingBox';
 import MessageBox from '../../components/MessageBox';
 import { Store } from '../../Store';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getError } from '../../utils';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 
@@ -44,6 +42,7 @@ const reducer = (state, action) => {
 
 export default function UserListScreen() {
   const navigate = useNavigate();
+
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -57,9 +56,11 @@ export default function UserListScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get('/api/users', {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
@@ -85,11 +86,11 @@ export default function UserListScreen() {
         headers: { authorization: `Bearer ${userInfo.token}` },
       });
 
-      toast.success('User deleted successfully');
       dispatch({ type: 'DELETE_SUCCESS' });
+      toast.success('User deleted successfully');
     } catch (error) {
-      toast.error(getError(error));
       dispatch({ type: 'DELETE_FAIL' });
+      toast.error(getError(error));
     }
   };
 

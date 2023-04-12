@@ -25,6 +25,7 @@ export default function ProfileScreen() {
   const { userInfo } = state;
 
   // TODO: Password confirmation
+  // FIXME: Password requirment
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
   const [password, setPassword] = useState('');

@@ -3,11 +3,9 @@ import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../../components/LoadingBox';
 import MessageBox from '../../components/MessageBox';
 import { Store } from '../../Store';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getError } from '../../utils';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 
@@ -38,6 +36,7 @@ const reducer = (state, action) => {
 
 export default function OrderListScreen() {
   const navigate = useNavigate();
+
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -49,12 +48,13 @@ export default function OrderListScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: 'FETCH_REQUEST' });
-
       try {
+        dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get('/api/orders', {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
@@ -80,11 +80,11 @@ export default function OrderListScreen() {
         headers: { authorization: `Bearer ${userInfo.token}` },
       });
 
-      toast.success('Order deleted successfully');
       dispatch({ type: 'DELETE_SUCCESS' });
+      toast.success('Order deleted successfully');
     } catch (error) {
-      toast.error(getError(error));
       dispatch({ type: 'DELETE_FAIL' });
+      toast.error(getError(error));
     }
   };
 

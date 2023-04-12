@@ -23,13 +23,13 @@ const reducer = (state, action) => {
 };
 
 export default function DashboardScreen() {
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
   });
-
-  const { state } = useContext(Store);
-  const { userInfo } = state;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +48,7 @@ export default function DashboardScreen() {
 
     fetchData();
   }, [userInfo]);
+
   return (
     <div>
       <h1>Dashboard</h1>

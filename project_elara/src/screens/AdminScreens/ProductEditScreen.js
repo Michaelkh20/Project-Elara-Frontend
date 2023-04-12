@@ -39,7 +39,6 @@ const reducer = (state, action) => {
 
 export default function ProductEditScreen() {
   const navigate = useNavigate();
-
   const params = useParams();
   const { id: productId } = params;
 
@@ -66,6 +65,7 @@ export default function ProductEditScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
+
         const { data } = await axios.get(`/api/products/${productId}`);
 
         setName(data.name);
@@ -114,6 +114,7 @@ export default function ProductEditScreen() {
 
       dispatch({ type: 'UPDATE_SUCCESS' });
       toast.success('Product updated successfully');
+
       navigate('/admin/products');
     } catch (error) {
       dispatch({ type: 'UPDATE_FAIL' });
@@ -121,10 +122,12 @@ export default function ProductEditScreen() {
     }
   };
 
+  // TODO: Move file uploading to frontend
   const uploadFileHandler = async (e, forImages) => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
     bodyFormData.append('file', file);
+
     try {
       dispatch({ type: 'UPLOAD_REQUEST' });
 
@@ -136,11 +139,13 @@ export default function ProductEditScreen() {
       });
 
       dispatch({ type: 'UPLOAD_SUCCESS' });
+
       if (forImages) {
         setImages([...images, data.secure_url]);
       } else {
         setImage(data.secure_url);
       }
+
       toast.success('Image uploaded successfully. Click Update to apply it');
     } catch (error) {
       dispatch({ type: 'UPLOAD_FAIL' });

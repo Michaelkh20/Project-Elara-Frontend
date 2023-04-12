@@ -12,10 +12,10 @@ import axios from 'axios';
 export default function ForgetPasswordScreen() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-
   const { state } = useContext(Store);
   const { userInfo } = state;
+
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     if (userInfo) {
