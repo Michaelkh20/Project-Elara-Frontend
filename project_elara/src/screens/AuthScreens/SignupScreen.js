@@ -7,10 +7,104 @@ import Button from 'react-bootstrap/Button';
 import { useContext, useEffect, useReducer, useState } from 'react';
 import { Store } from '../../Store';
 import { toast } from 'react-toastify';
-import { getError } from '../../utils';
+import { emailRegexp, getError, passwordRegexp } from '../../utils';
 import MessageBox from '../../components/MessageBox';
 
-// INTEGRATED
+//INTEGRATED
+
+const reducer = (state, action) => {
+  let newState;
+  switch (action.type) {
+    case 'PASSWORD_UPDATE':
+      {
+        const password = {
+          value: action.payload,
+          isValid: passwordRegexp.test(action.payload),
+        };
+        const confirmPassword = {
+          ...state.reqFields.confirmPassword,
+          isValid: password.value === state.reqFields.confirmPassword.value,
+        };
+
+        newState = {
+          ...state,
+          reqFields: { ...state.reqFields, password, confirmPassword },
+        };
+      }
+      break;
+    case 'CONFIRM_PASSWORD_UPDATE':
+      {
+        const confirmPassword = {
+          value: action.payload,
+          isValid: state.reqFields.password.value === action.payload,
+        };
+
+        newState = {
+          ...state,
+          reqFields: { ...state.reqFields, confirmPassword },
+        };
+      }
+      break;
+    case 'EMAIL_UPDATE':
+      newState = {
+        ...state,
+        reqFields: {
+          ...state.reqFields,
+          email: {
+            value: action.payload,
+            isValid: emailRegexp.test(action.payload),
+          },
+        },
+        isEmailRegistered: false,
+      };
+      break;
+    case 'FIRSTNAME_UPDATE':
+      newState = {
+        ...state,
+        reqFields: {
+          ...state.reqFields,
+          firstName: { value: action.payload, isValid: !!action.payload },
+        },
+      };
+      break;
+    case 'LASTNAME_UPDATE':
+      newState = {
+        ...state,
+        reqFields: {
+          ...state.reqFields,
+          lastName: { value: action.payload, isValid: !!action.payload },
+        },
+      };
+      break;
+    case 'BIRTHDATE_UPDATE':
+      newState = {
+        ...state,
+        reqFields: {
+          ...state.reqFields,
+          birthDate: { value: action.payload, isValid: !!action.payload },
+        },
+      };
+      break;
+    case 'PHOTO_UPDATE':
+      newState = {
+        ...state,
+        pictureUrl: { value: action.payload, isValid: !!action.payload },
+      };
+      break;
+    case 'ISEMAILREGISTRED_UPDATE':
+      newState = { ...state, isEmailRegistered: action.payload };
+      break;
+    default:
+      newState = state;
+  }
+
+  const isFormValid =
+    Object.values(newState.reqFields)
+      .map((field) => field.isValid)
+      .reduce((acc, x) => acc && x, true) && !newState.isEmailRegistered;
+  return { ...newState, isFormValid };
+};
+
 export default function SignupScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -20,18 +114,35 @@ export default function SignupScreen() {
   const { userInfo } = state;
 
   const [widget, setWidget] = useState(null);
-  const [isEmailRegistered, setIsEmailRegistered] = useState(false);
 
-  const [email, setEmail] = useState({ value: '', isValid: false });
-  const [password, setPassword] = useState({ value: '', isValid: false });
-  const [confirmPassword, setConfirmPassword] = useState({
-    value: '',
-    isValid: false,
+  const [
+    {
+      reqFields: {
+        email,
+        firstName,
+        lastName,
+        birthDate,
+        password,
+        confirmPassword,
+      },
+      pictureUrl,
+      isEmailRegistered,
+      isFormValid,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    reqFields: {
+      email: { value: '', isValid: false },
+      firstName: { value: '', isValid: false },
+      lastName: { value: '', isValid: false },
+      birthDate: { value: '', isValid: false },
+      password: { value: '', isValid: false },
+      confirmPassword: { value: '', isValid: false },
+    },
+    pictureUrl: { value: '', isValid: false },
+    isEmailRegistered: false,
+    isFormValid: false,
   });
-  const [firstName, setFirstName] = useState({ value: '', isValid: false });
-  const [lastName, setLastName] = useState({ value: '', isValid: false });
-  const [pictureUrl, setPictureUrl] = useState({ value: '', isValid: false });
-  const [birthDate, setBirthDate] = useState({ value: '', isValid: false });
 
   useEffect(() => {
     if (userInfo) {
@@ -58,22 +169,17 @@ export default function SignupScreen() {
           return;
         }
         if (result.event === 'success') {
-          console.log(result.info.secure_url);
-          setPictureUrl({
-            value: result.info.secure_url,
-            isValid: !!result.info.secure_url,
-          });
+          dispatch({ type: 'PHOTO_UPDATE', payload: result.info.secure_url });
         }
       }
     );
-    console.log(widget);
 
     setWidget(widget);
 
     return () => {
       widget.destroy().then(() => console.log('Widget was removed'));
     };
-  }, []);
+  }, [pictureUrl]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -89,33 +195,22 @@ export default function SignupScreen() {
     //   );
 
     //   if (status === 409) {
-    //     setIsEmailRegistered(true);
+    //     dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true });
     //     return;
     //   } else {
-    //     setIsEmailRegistered(false);
+    //     dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: false });
     //   }
     // } catch (error) {
     //   toast.error(getError(error));
     //   return;
     // }
 
-    const isDataValid = [
-      email,
-      password,
-      confirmPassword,
-      firstName,
-      lastName,
-      birthDate,
-    ]
-      .map((x) => x.isValid)
-      .reduce((acc, x) => acc && x, true);
-
-    if (!isDataValid) {
-      // console.log('Data is invalid');
+    if (!isFormValid) {
+      console.log('Data is invalid');
       return;
     }
 
-    // console.log('All data is valid');
+    console.log('All data is valid');
 
     // try {
     //   await axios.post('/v1/users', {
@@ -127,15 +222,14 @@ export default function SignupScreen() {
     //     birthDate,
     //   });
 
-    //   toast.success('You have successfully registered');
     //   navigate(`/email-sent?email=${email}`);
     // } catch (error) {
     //   toast.error(getError(error));
     // }
 
-    navigate(`/email-sent?email=${email.value}`);
+    // navigate(`/email-sent?email=${email.value}?type=reg`);
 
-    // setIsEmailRegistered(true);
+    dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true });
   };
 
   return (
@@ -156,18 +250,16 @@ export default function SignupScreen() {
             isValid={email.isValid && !isEmailRegistered}
             isInvalid={!email.isValid || isEmailRegistered}
             onChange={(e) => {
-              setEmail({
-                value: e.target.value,
-                isValid: e.target.value.match(
-                  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                ),
-              });
-              setIsEmailRegistered(false);
+              dispatch({ type: 'EMAIL_UPDATE', payload: e.target.value });
             }}
           />
           {/* MOCK */}
           {!isEmailRegistered && (
-            <Button onClick={() => setIsEmailRegistered(true)}>
+            <Button
+              onClick={() =>
+                dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true })
+              }
+            >
               Email invalid
             </Button>
           )}
@@ -189,7 +281,7 @@ export default function SignupScreen() {
             isValid={firstName.isValid}
             isInvalid={!firstName.isValid}
             onChange={(e) =>
-              setFirstName({ value: e.target.value, isValid: !!e.target.value })
+              dispatch({ type: 'FIRSTNAME_UPDATE', payload: e.target.value })
             }
           />
         </Form.Group>
@@ -200,7 +292,7 @@ export default function SignupScreen() {
             isValid={lastName.isValid}
             isInvalid={!lastName.isValid}
             onChange={(e) =>
-              setLastName({ value: e.target.value, isValid: !!e.target.value })
+              dispatch({ type: 'LASTNAME_UPDATE', payload: e.target.value })
             }
           />
         </Form.Group>
@@ -222,7 +314,7 @@ export default function SignupScreen() {
             isValid={birthDate.isValid}
             isInvalid={!birthDate.isValid}
             onChange={(e) =>
-              setBirthDate({ value: e.target.value, isValid: !!e.target.value })
+              dispatch({ type: 'BIRTHDATE_UPDATE', payload: e.target.value })
             }
           />
         </Form.Group>
@@ -234,16 +326,7 @@ export default function SignupScreen() {
             isValid={password.isValid}
             isInvalid={!password.isValid}
             onChange={(e) => {
-              setPassword({
-                value: e.target.value,
-                isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(
-                  e.target.value
-                ),
-              });
-              setConfirmPassword({
-                ...confirmPassword,
-                isValid: password.value === confirmPassword.value,
-              });
+              dispatch({ type: 'PASSWORD_UPDATE', payload: e.target.value });
             }}
           />
           <Form.Control.Feedback type="invalid">
@@ -256,14 +339,12 @@ export default function SignupScreen() {
           <Form.Control
             type="password"
             required
-            isValid={
-              password.value !== '' && password.value === confirmPassword.value
-            }
-            isInvalid={password.value !== confirmPassword.value}
+            isValid={password.value !== '' && confirmPassword.isValid}
+            isInvalid={!confirmPassword.isValid}
             onChange={(e) =>
-              setConfirmPassword({
-                value: e.target.value,
-                isValid: password.value === e.target.value,
+              dispatch({
+                type: 'CONFIRM_PASSWORD_UPDATE',
+                payload: e.target.value,
               })
             }
           />
@@ -272,7 +353,9 @@ export default function SignupScreen() {
           </Form.Control.Feedback>
         </Form.Group>
         <div className="mb-3">
-          <Button type="submit">Sign Up</Button>
+          <Button type="submit" disabled={!isFormValid}>
+            Sign Up
+          </Button>
         </div>
         <div className="mb-3">
           Already have an account?{' '}

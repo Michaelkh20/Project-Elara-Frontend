@@ -8,24 +8,28 @@ import { Link, useLocation } from 'react-router-dom';
 function EmailSentScreen() {
   const { search } = useLocation();
   const email = new URLSearchParams(search).get('email');
+  const type = new URLSearchParams(search).get('type');
 
   return (
     <Container>
       <Row className="justify-content-md-center">
         <Col md="auto">
-          <div class="bg-light p-5 rounded-lg m-3">
-            <h1 className="display-4">Подтверждение регистрации</h1>
+          <div className="bg-light p-5 rounded-lg m-3">
+            <h1 className="display-4">
+              {type === 'reg' ? 'Подтверждение регистрации' : 'Cмена пароля'}
+            </h1>
             <p className="lead">
-              Мы отправили письмо с ссылкой для подтверждения регистрации на ваш
-              электронный адрес:
+              Мы отправили письмо с ссылкой для{' '}
+              {type === 'reg' ? 'подтверждения регистрации' : 'смены пароля'} на
+              ваш электронный адрес:
             </p>
             <p>
               <strong>{email}</strong>
             </p>
-            <hr class="my-4" />
+            <hr className="my-4" />
             <p className="lead">
               Пожалуйста, проверьте вашу почту и следуйте инструкциям в письме
-              для завершения регистрации.
+              для завершения {type === 'reg' ? 'регистрации' : 'смены пароля'}.
             </p>
             <Link className="btn btn-primary btn-lg" to="/">
               На главную

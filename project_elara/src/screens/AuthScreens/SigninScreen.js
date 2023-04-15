@@ -9,6 +9,8 @@ import { Store } from '../../Store';
 import { toast } from 'react-toastify';
 import { getError } from '../../utils';
 
+// INTEGRATED
+
 export default function SigninScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();

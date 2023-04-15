@@ -2,17 +2,17 @@ import React, { useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getError } from '../../utils';
 import LoadingButton from '../../components/LoadingButton';
 
 // INTEGRATED
-function EmailConfirmationScreen() {
+
+export default function SignupConfirmationScreen() {
   const navigate = useNavigate();
-  const { search } = useLocation();
-  const token = new URLSearchParams(search).get('token');
+  const { token } = useParams();
 
   useEffect(() => {
     if (!token) {
@@ -22,7 +22,7 @@ function EmailConfirmationScreen() {
 
   const handleConfirmEmail = async () => {
     // try {
-    //   await axios.get(`/v1/users/verify-email?token=${token}`);
+    // await axios.post(`/v1/users/verify-email?token=${token}`, {});
 
     //   toast.success('You have successfully confirmed your email');
     // } catch (error) {
@@ -62,5 +62,3 @@ function EmailConfirmationScreen() {
     </Container>
   );
 }
-
-export default EmailConfirmationScreen;

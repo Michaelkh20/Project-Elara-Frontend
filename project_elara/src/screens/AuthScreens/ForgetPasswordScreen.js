@@ -2,12 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Store } from '../../Store';
 import { toast } from 'react-toastify';
-import { getError } from '../../utils';
+import { emailRegexp, getError } from '../../utils';
 import Container from 'react-bootstrap/Container';
 import { Helmet } from 'react-helmet-async';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
+
+//INTEGRATED
 
 export default function ForgetPasswordScreen() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ export default function ForgetPasswordScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState({ value: '', isValid: false });
 
   useEffect(() => {
     if (userInfo) {
@@ -25,11 +27,15 @@ export default function ForgetPasswordScreen() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (!email.isValid) {
+      return;
+    }
+
     try {
-      const { data } = await axios.post('/api/users/forget-password', {
-        email,
-      });
-      toast.success(data.message);
+      // await axios.post(`/v1/users/forgot-password?login=${email.value}`, {});
+
+      navigate(`/email-sent?email=${email.value}&type=reset`);
     } catch (error) {
       toast.error(getError(error));
     }
@@ -41,17 +47,26 @@ export default function ForgetPasswordScreen() {
         <title>Forget Password</title>
       </Helmet>
       <h1 className="my-3">Forget Password</h1>
-      <Form onSubmit={submitHandler}>
+      <Form noValidate onSubmit={submitHandler}>
         <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control
-            type="email"
+            type="text"
             required
-            onChange={(e) => setEmail(e.target.value)}
+            isValid={email.isValid}
+            isInvalid={!email.isValid}
+            onChange={(e) => {
+              setEmail({
+                value: e.target.value,
+                isValid: emailRegexp.test(e.target.value),
+              });
+            }}
           />
         </Form.Group>
         <div className="mb-3">
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={!email.isValid}>
+            Submit
+          </Button>
         </div>
       </Form>
     </Container>

@@ -41,7 +41,7 @@ import UserListScreen from './screens/AdminScreens/UserListScreen';
 import UserEditScreen from './screens/AdminScreens/UserEditScreen';
 import ForgetPasswordScreen from './screens/AuthScreens/ForgetPasswordScreen';
 import ResetPasswordScreen from './screens/AuthScreens/ResetPasswordScreen';
-import EmailConfirmationScreen from './screens/AuthScreens/EmailConfirmationScreen';
+import SignupConfirmationScreen from './screens/AuthScreens/SignupConfirmationScreen';
 import EmailSentScreen from './screens/AuthScreens/EmailSentScreen';
 
 function App() {
@@ -183,8 +183,8 @@ function App() {
               <Route path="/signup" element={<SignupScreen />} />
               <Route path="/email-sent" element={<EmailSentScreen />} />
               <Route
-                path="/confirm-email"
-                element={<EmailConfirmationScreen />}
+                path="/confirm-registration/:token"
+                element={<SignupConfirmationScreen />}
               />
 
               <Route
