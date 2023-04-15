@@ -41,6 +41,8 @@ import UserListScreen from './screens/AdminScreens/UserListScreen';
 import UserEditScreen from './screens/AdminScreens/UserEditScreen';
 import ForgetPasswordScreen from './screens/AuthScreens/ForgetPasswordScreen';
 import ResetPasswordScreen from './screens/AuthScreens/ResetPasswordScreen';
+import EmailConfirmationScreen from './screens/AuthScreens/EmailConfirmationScreen';
+import EmailSentScreen from './screens/AuthScreens/EmailSentScreen';
 
 function App() {
   // const navigate = useNavigate();
@@ -98,7 +100,7 @@ function App() {
                 <SearchBox />
                 <Nav className="me-auto w-100 justify-content-end">
                   <Link to="/cart" className="nav-link">
-                    Cart
+                    Cart{' '}
                     {cart.cartItems.length > 0 && (
                       <Badge pill bg="danger">
                         {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
@@ -179,6 +181,12 @@ function App() {
               <Route path="/search" element={<SearchScreen />} />
               <Route path="/signin" element={<SigninScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
+              <Route path="/email-sent" element={<EmailSentScreen />} />
+              <Route
+                path="/confirm-email"
+                element={<EmailConfirmationScreen />}
+              />
+
               <Route
                 path="/forget-password"
                 element={<ForgetPasswordScreen />}

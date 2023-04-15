@@ -30,13 +30,18 @@ export default function SigninScreen() {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('/api/users/signin', {
-        email,
-        password,
-      });
+      // const { data } = await axios.post('/api/users/signin', {
+      //   email,
+      //   password,
+      // });
+
+      const { data } = await axios.get(
+        `/v1/auth/login?login=${email}&password=${password}`
+      );
 
       ctxDispatch({ type: 'USER_SIGNIN', payload: data });
       localStorage.setItem('userInfo', JSON.stringify(data));
+
       navigate(redirect);
     } catch (error) {
       toast.error(getError(error));
