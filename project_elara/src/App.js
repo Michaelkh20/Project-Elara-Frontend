@@ -23,7 +23,6 @@ import ShippingAddressScreen from './screens/OrderFlowScreens/ShippingAddressScr
 import SignupScreen from './screens/AuthScreens/SignupScreen';
 import PaymentMethodScreen from './screens/OrderFlowScreens/PaymentMethodScreen';
 import PlaceOrderScreen from './screens/OrderFlowScreens/PlaceOrderScreen';
-import OrderScreen from './screens/UserScreens/OrderScreen';
 import OrderHistoryScreen from './screens/UserScreens/OrderHistoryScreen';
 import ProfileScreen from './screens/UserScreens/ProfileScreen';
 import Button from 'react-bootstrap/Button';
@@ -43,6 +42,7 @@ import ForgetPasswordScreen from './screens/AuthScreens/ForgetPasswordScreen';
 import ResetPasswordScreen from './screens/AuthScreens/ResetPasswordScreen';
 import SignupConfirmationScreen from './screens/AuthScreens/SignupConfirmationScreen';
 import EmailSentScreen from './screens/AuthScreens/EmailSentScreen';
+import OrderScreen from './screens/OrderFlowScreens/OrderScreen';
 
 function App() {
   // const navigate = useNavigate();
