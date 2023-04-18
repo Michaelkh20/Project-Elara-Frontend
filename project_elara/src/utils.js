@@ -1,7 +1,6 @@
-// FIXME: Fix to match new format
 export const getError = (error) => {
-  return error.response && error.response.data.message
-    ? error.response.data.message
+  return error.response && error.response.data
+    ? error.response.data
     : error.message;
 };
 

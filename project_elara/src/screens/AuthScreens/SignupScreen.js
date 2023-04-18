@@ -179,31 +179,31 @@ export default function SignupScreen() {
     return () => {
       widget.destroy().then(() => console.log('Widget was removed'));
     };
-  }, [pictureUrl]);
+  }, []);
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    // try {
-    //   const { status } = await axios.get(
-    //     `/v1/users/login-available?login=${email.value}`,
-    //     {
-    //       validateStatus: function (status) {
-    //         return status === 200 || status === 409; // Resolve only if the status code is less than 500
-    //       },
-    //     }
-    //   );
+    try {
+      const { status } = await axios.get(
+        `/api/v1/users/login-available?login=${email.value}`,
+        {
+          validateStatus: function (status) {
+            return status === 200 || status === 409;
+          },
+        }
+      );
 
-    //   if (status === 409) {
-    //     dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true });
-    //     return;
-    //   } else {
-    //     dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: false });
-    //   }
-    // } catch (error) {
-    //   toast.error(getError(error));
-    //   return;
-    // }
+      if (status === 409) {
+        dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true });
+        return;
+      } else {
+        dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: false });
+      }
+    } catch (error) {
+      toast.error(getError(error));
+      return;
+    }
 
     if (!isFormValid) {
       console.log('Data is invalid');
@@ -212,24 +212,20 @@ export default function SignupScreen() {
 
     console.log('All data is valid');
 
-    // try {
-    //   await axios.post('/v1/users', {
-    //     login: email,
-    //     password,
-    //     firstName,
-    //     lastName,
-    //     pictureUrl,
-    //     birthDate,
-    //   });
+    try {
+      await axios.post('/api/v1/users', {
+        login: email.value,
+        password: password.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        pictureUrl: pictureUrl.value,
+        birthDate: birthDate.value,
+      });
 
-    //   navigate(`/email-sent?email=${email}`);
-    // } catch (error) {
-    //   toast.error(getError(error));
-    // }
-
-    // navigate(`/email-sent?email=${email.value}?type=reg`);
-
-    dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true });
+      navigate(`/email-sent?email=${email.value}&type=reg`);
+    } catch (error) {
+      toast.error(getError(error));
+    }
   };
 
   return (
@@ -253,16 +249,6 @@ export default function SignupScreen() {
               dispatch({ type: 'EMAIL_UPDATE', payload: e.target.value });
             }}
           />
-          {/* MOCK */}
-          {!isEmailRegistered && (
-            <Button
-              onClick={() =>
-                dispatch({ type: 'ISEMAILREGISTRED_UPDATE', payload: true })
-              }
-            >
-              Email invalid
-            </Button>
-          )}
           {isEmailRegistered && (
             <Form.Control.Feedback type="invalid">
               This email is already registered

@@ -21,20 +21,15 @@ export default function SignupConfirmationScreen() {
   });
 
   const handleConfirmEmail = async () => {
-    // try {
-    // await axios.post(`/v1/users/verify-email?token=${token}`, {});
+    try {
+      await axios.post(`/api/v1/users/verify-email?token=${token}`, {});
 
-    //   toast.success('You have successfully confirmed your email');
-    // } catch (error) {
-    //   toast.error(getError(error));
-    //   return;
-    // }
-
-    // MOCK
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    toast.success('You have successfully confirmed your email');
-
-    navigate('/signin');
+      toast.success('You have successfully confirmed your email');
+      navigate('/signin');
+    } catch (error) {
+      toast.error(getError(error));
+      return;
+    }
   };
 
   return (

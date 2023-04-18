@@ -51,9 +51,6 @@ function App() {
 
   const signoutHandler = () => {
     ctxDispatch({ type: 'USER_SIGNOUT' });
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('shippingAddress');
-    localStorage.removeItem('paymentMethod');
     window.location.href = '/signin';
     // navigate('/signin');
   };
@@ -108,7 +105,10 @@ function App() {
                     )}
                   </Link>
                   {userInfo ? (
-                    <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                    <NavDropdown
+                      title={userInfo.firstName}
+                      id="basic-nav-dropdown"
+                    >
                       <LinkContainer to="/profile">
                         <NavDropdown.Item>User profile</NavDropdown.Item>
                       </LinkContainer>
@@ -176,7 +176,7 @@ function App() {
         <main>
           <Container className="mt-3">
             <Routes>
-              <Route path="/product/:slug" element={<ProductScreen />} />
+              <Route path="/product/:id" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
               <Route path="/search" element={<SearchScreen />} />
               <Route path="/signin" element={<SigninScreen />} />

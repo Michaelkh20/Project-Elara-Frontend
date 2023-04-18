@@ -10,19 +10,25 @@ import Card from 'react-bootstrap/Card';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { getError } from '../utils';
+
+//INTEGRATED
 
 export default function CartScreen() {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
 
   const {
+    userInfo,
     cart: { cartItems },
   } = state;
 
   const updateCartHandler = async (item, quantity) => {
-    const { data } = await axios.get(`/api/products/${item._id}`);
+    const {
+      data: { quantity: countInStock },
+    } = await axios.get(`/api/v1/products/${item.id}`);
 
-    if (data.countInStock < quantity) {
+    if (countInStock < quantity) {
       toast.error('Sorry. Product is out of stock');
       return;
     }
@@ -37,8 +43,31 @@ export default function CartScreen() {
     ctxDispatch({ type: 'CART_REMOVE_ITEM', payload: item });
   };
 
-  const checkoutHandler = () => {
-    navigate('/signin?redirect=/shipping');
+  const checkoutHandler = async () => {
+    if (!userInfo) {
+      navigate('/signin?redirect=/cart');
+    }
+
+    try {
+      const { data } = await axios.post(
+        '/api/v1/orders/place',
+        {
+          userId: userInfo.id,
+          positions: cartItems.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+          })),
+        },
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+
+      ctxDispatch({ type: 'ORDER_CREATE', payload: data });
+      navigate('/shipping');
+    } catch (error) {
+      toast.error(getError(error));
+    }
   };
 
   return (
@@ -56,15 +85,15 @@ export default function CartScreen() {
           ) : (
             <ListGroup>
               {cartItems.map((item) => (
-                <ListGroup.Item key={item._id}>
+                <ListGroup.Item key={item.id}>
                   <Row className="align-items-center">
                     <Col md={4}>
                       <img
-                        src={item.image}
+                        src={item.pictures[0]}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
-                      <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                      <Link to={`/product/${item.id}`}>{item.name}</Link>
                     </Col>
                     <Col md={3}>
                       <Button

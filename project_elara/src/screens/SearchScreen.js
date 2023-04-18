@@ -33,40 +33,6 @@ const reducer = (state, action) => {
   }
 };
 
-const prices = [
-  {
-    name: '$1 to $50',
-    value: '1-50',
-  },
-  {
-    name: '$51 to $200',
-    value: '51-200',
-  },
-  {
-    name: '$201 to $1000',
-    value: '201-1000',
-  },
-];
-
-const ratings = [
-  {
-    name: '4stars $ up',
-    rating: 4,
-  },
-  {
-    name: '3stars $ up',
-    rating: 3,
-  },
-  {
-    name: '2stars $ up',
-    rating: 2,
-  },
-  {
-    name: '1stars $ up',
-    rating: 1,
-  },
-];
-
 export default function SearchScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -173,7 +139,7 @@ export default function SearchScreen() {
                   Any
                 </Link>
               </li>
-              {prices.map((p) => (
+              {/* {prices.map((p) => (
                 <li key={p.value}>
                   <Link
                     className={p.value === price ? 'text-bold' : ''}
@@ -182,13 +148,13 @@ export default function SearchScreen() {
                     {p.name}
                   </Link>
                 </li>
-              ))}
+              ))} */}
             </ul>
           </div>
           <div>
             <h3>Avg. Customer Review</h3>
             <ul>
-              {ratings.map((r) => (
+              {/* {ratings.map((r) => (
                 <li key={r.name}>
                   <Link
                     className={`${r.rating}` === `${rating}` ? 'text-bold' : ''}
@@ -197,7 +163,7 @@ export default function SearchScreen() {
                     <Rating caption={' & up'} rating={r.rating}></Rating>
                   </Link>
                 </li>
-              ))}
+              ))} */}
               <li>
                 <Link
                   className={'all' === rating ? 'text-bold' : ''}

@@ -9,6 +9,8 @@ import { getError } from '../../utils';
 import Button from 'react-bootstrap/Button';
 import Pagination from 'react-bootstrap/Pagination';
 
+// INTEGRATED
+
 const pageSize = 10;
 
 const reducer = (state, action) => {
@@ -26,13 +28,12 @@ const reducer = (state, action) => {
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
     case 'PAGE_CHANGE':
-      return { ...state, page: action.payload.page };
+      return { ...state, page: action.payload };
     default:
       return state;
   }
 };
 
-// INTEGRATED
 export default function OrderHistoryScreen() {
   const navigate = useNavigate();
 
@@ -44,6 +45,7 @@ export default function OrderHistoryScreen() {
     {
       loading: true,
       error: '',
+      ordres: [],
       page: 1,
       totalPages: 1,
     }
@@ -54,12 +56,8 @@ export default function OrderHistoryScreen() {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
 
-        // const { data } = await axios.get(`/api/orders/mine`, {
-        //   headers: { authorization: `Bearer ${userInfo.token}` },
-        // });
-
         const { data } = await axios.get(
-          `/v1/orders/${userInfo.id}?pageNumber=${
+          `/api/v1/orders/${userInfo.id}?pageNumber=${
             page - 1
           }&pageSize=${pageSize}`,
           {

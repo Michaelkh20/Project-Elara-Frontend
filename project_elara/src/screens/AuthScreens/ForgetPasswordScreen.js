@@ -29,13 +29,19 @@ export default function ForgetPasswordScreen() {
     e.preventDefault();
 
     if (!email.isValid) {
+      console.log('Data is invalid');
       return;
     }
 
-    try {
-      // await axios.post(`/v1/users/forgot-password?login=${email.value}`, {});
+    console.log('All data is valid');
 
-      navigate(`/email-sent?email=${email.value}&type=reset`);
+    try {
+      await axios.post(
+        `/api/v1/users/forgot-password?login=${email.value}`,
+        {}
+      );
+
+      navigate(`/email-sent?email=${email.value}&type=resetpswd`);
     } catch (error) {
       toast.error(getError(error));
     }

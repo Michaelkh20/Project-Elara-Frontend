@@ -63,14 +63,17 @@ export default function ResetPasswordScreen() {
     e.preventDefault();
 
     if (!isFormValid) {
+      console.log('Data is invalid');
       return;
     }
 
+    console.log('All data is valid');
+
     try {
-      // await axios.post('/v1/users/reset-password', {
-      //   resetPasswordToken: token,
-      //   newPassword: password,
-      // });
+      await axios.post('/api/v1/users/reset-password', {
+        resetPasswordToken: token,
+        newPassword: password.value,
+      });
 
       toast.success('Password updated successfully');
       navigate('/signin');

@@ -5,8 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
-import { useNavigate, useParams } from 'react-router-dom';
-import Rating from '../components/Rating';
+import { useParams } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
@@ -15,14 +14,19 @@ import { getError } from '../utils';
 import { Store } from '../Store';
 import { toast } from 'react-toastify';
 
+// INTEGRATED half way
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_REQUEST':
-      console.log(state);
       return { ...state, loading: true };
     case 'FETCH_SUCCESS':
-      console.log(state);
-      return { ...state, product: action.payload, loading: false };
+      const product = {
+        ...action.payload,
+        countInStock: action.payload.quantity,
+        quantity: 0,
+      };
+      return { ...state, product, loading: false };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
     default:
@@ -31,11 +35,12 @@ const reducer = (state, action) => {
 };
 
 function ProductScreen() {
-  const navigate = useNavigate();
-  const { slug } = useParams();
+  const { id } = useParams();
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { cart } = state;
+  const {
+    cart: { cartItems },
+  } = state;
 
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -50,25 +55,27 @@ function ProductScreen() {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
 
-        const result = await axios.get(`/api/products/slug/${slug}`);
+        const { data } = await axios.get(`/api/v1/products/${id}`);
 
-        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
       }
     };
 
     fetchData();
-  }, [slug]);
+  }, [id]);
 
   const addToCartHandler = async () => {
-    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const existItem = cartItems.find((x) => x.id === product.id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
 
-    const { data } = await axios.get(`/api/products/${product._id}`);
+    const {
+      data: { quantity: countInStock },
+    } = await axios.get(`/api/v1/products/${product.id}`);
 
-    if (data.countInStock < quantity) {
-      toast.error('Sorry. Product is out of stock');
+    if (countInStock < quantity) {
+      window.alert('Sorry. Product is out of stock');
       return;
     }
 
@@ -76,8 +83,6 @@ function ProductScreen() {
       type: 'CART_ADD_ITEM',
       payload: { ...product, quantity },
     });
-
-    navigate('/cart');
   };
 
   return loading ? (
@@ -89,7 +94,7 @@ function ProductScreen() {
       <Col md={6}>
         <img
           className="img-large"
-          src={selectedImage || product.image}
+          src={selectedImage || product.pictures[0]}
           alt={product.name}
         ></img>
       </Col>
@@ -101,13 +106,10 @@ function ProductScreen() {
             </Helmet>
             <h1>{product.name}</h1>
           </ListGroup.Item>
-          <ListGroup.Item>
-            <Rating rating={product.rating} numReviews={product.numReviews} />
-          </ListGroup.Item>
           <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
           <ListGroup.Item>
             <Row xs={1} md={2} className="g-2">
-              {[product.image, ...product.images].map((img) => (
+              {[...product.pictures].map((img) => (
                 <Col key={img}>
                   <Card>
                     <Button
