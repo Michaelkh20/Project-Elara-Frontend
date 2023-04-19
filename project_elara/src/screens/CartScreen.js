@@ -64,7 +64,7 @@ export default function CartScreen() {
       );
 
       ctxDispatch({ type: 'ORDER_CREATE', payload: data });
-      navigate('/shipping');
+      navigate('/shippingAddress');
     } catch (error) {
       toast.error(getError(error));
     }

@@ -82,7 +82,7 @@ const reducer1 = (state, action) => {
     case 'OLDPASSWORD_UPDATE': {
       const oldPassword = {
         value: action.payload,
-        isValid: passwordRegexp.test(action.payload),
+        isValid: action.payload.length >= 6,
       };
       const isForm1Valid =
         oldPassword.isValid &&
@@ -93,7 +93,7 @@ const reducer1 = (state, action) => {
     case 'NEWPASSWORD_UPDATE': {
       const newPassword = {
         value: action.payload,
-        isValid: passwordRegexp.test(action.payload),
+        isValid: action.payload.length >= 6,
       };
       const confirmNewPassword = {
         ...state.confirmNewPassword,
@@ -290,13 +290,9 @@ export default function ProfileScreen() {
     }
 
     try {
-      await axios.delete(
-        `/api/v1/users/${userInfo.id}`,
-        {},
-        {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        }
-      );
+      await axios.delete(`/api/v1/users/${userInfo.id}`, {
+        headers: { authorization: `Bearer ${userInfo.token}` },
+      });
 
       ctxDispatch({ type: 'USER_SIGNOUT' });
       navigate('/signin');
@@ -408,6 +404,7 @@ export default function ProfileScreen() {
           <Form.Label>Old Password</Form.Label>
           <Form.Control
             type="password"
+            value={oldPassword.value}
             required
             isValid={oldPassword.isValid}
             isInvalid={!oldPassword.isValid}
@@ -419,14 +416,14 @@ export default function ProfileScreen() {
             }}
           />
           <Form.Control.Feedback type="invalid">
-            Password should has minimum 8 characters, at least one uppercase
-            letter, one lowercase letter and one number
+            Password should has minimum 6 characters
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="newPassword">
           <Form.Label>New Password</Form.Label>
           <Form.Control
             type="password"
+            value={newPassword.value}
             required
             isValid={newPassword.isValid}
             isInvalid={!newPassword.isValid}
@@ -438,14 +435,14 @@ export default function ProfileScreen() {
             }}
           />
           <Form.Control.Feedback type="invalid">
-            Password should has minimum 8 characters, at least one uppercase
-            letter, one lowercase letter and one number
+            Password should has minimum 6 characters
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="confirmNewPassword">
           <Form.Label>Confirm New Password</Form.Label>
           <Form.Control
             type="password"
+            value={confirmNewPassword.value}
             required
             isValid={newPassword.value !== '' && confirmNewPassword.isValid}
             isInvalid={!confirmNewPassword.isValid}

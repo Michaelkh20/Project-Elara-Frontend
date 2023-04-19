@@ -43,6 +43,7 @@ import ResetPasswordScreen from './screens/AuthScreens/ResetPasswordScreen';
 import SignupConfirmationScreen from './screens/AuthScreens/SignupConfirmationScreen';
 import EmailSentScreen from './screens/AuthScreens/EmailSentScreen';
 import OrderScreen from './screens/OrderFlowScreens/OrderScreen';
+import ShippingMethodsScreen from './screens/OrderFlowScreens/ShippingMethodsScreen';
 
 function App() {
   // const navigate = useNavigate();
@@ -55,40 +56,13 @@ function App() {
     // navigate('/signin');
   };
 
-  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data } = await axios.get(`/api/products/categories`);
-        setCategories(data);
-      } catch (error) {
-        toast.error(getError(error));
-      }
-    };
-    fetchCategories();
-  }, []);
-
   return (
     <BrowserRouter>
-      <div
-        className={
-          sidebarIsOpen
-            ? 'd-flex flex-column site-container active-cont'
-            : 'd-flex flex-column site-container'
-        }
-      >
+      <div className={'d-flex flex-column site-container'}>
         <ToastContainer position="bottom-center" limit={1} />
         <header>
           <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
-              <Button
-                variant="dark"
-                onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
-              >
-                <i className="fas fa-bars"></i>
-              </Button>
               <LinkContainer to="/">
                 <Navbar.Brand>Project Elara</Navbar.Brand>
               </LinkContainer>
@@ -129,7 +103,7 @@ function App() {
                       Sign In
                     </Link>
                   )}
-                  {userInfo && userInfo.isAdmin && (
+                  {userInfo && userInfo.role === 'ADMIN' && (
                     <NavDropdown title="Admin" id="admin-nav-dropdown">
                       <LinkContainer to="/admin/dashboard">
                         <NavDropdown.Item>Dashboard</NavDropdown.Item>
@@ -150,29 +124,6 @@ function App() {
             </Container>
           </Navbar>
         </header>
-        <div
-          className={
-            sidebarIsOpen
-              ? 'active-nav side-navbar d-flex justify-content-between flex-wrap flex-column'
-              : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
-          }
-        >
-          <Nav className="flex-column text-white w-100 p-2">
-            <Nav.Item>
-              <strong>Categories</strong>
-            </Nav.Item>
-            {categories.map((category) => (
-              <Nav.Item key={category}>
-                <LinkContainer
-                  to={{ pathname: '/search', search: `category=${category}` }}
-                  onClick={() => setSidebarIsOpen(false)}
-                >
-                  <Nav.Link>{category}</Nav.Link>
-                </LinkContainer>
-              </Nav.Item>
-            ))}
-          </Nav>
-        </div>
         <main>
           <Container className="mt-3">
             <Routes>
@@ -220,8 +171,15 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/shipping" element={<ShippingAddressScreen />} />
+              <Route
+                path="/shippingAddress"
+                element={<ShippingAddressScreen />}
+              />
               <Route path="/payment" element={<PaymentMethodScreen />} />
+              <Route
+                path="/shippingMethods"
+                element={<ShippingMethodsScreen />}
+              />
               {/* Admin Routes */}
               <Route
                 path="/admin/dashboard"

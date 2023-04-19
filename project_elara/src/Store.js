@@ -59,6 +59,7 @@ function reducer(state, action) {
         order: null,
       };
     case 'SAVE_SHIPPING_ADDRESS':
+      localStorage.setItem('shippingAddress', JSON.stringify(action.payload));
       return {
         ...state,
         cart: {
@@ -67,6 +68,8 @@ function reducer(state, action) {
         },
       };
     case 'SAVE_PAYMENT_METHOD':
+      localStorage.setItem('paymentMethod', action.payload);
+
       return {
         ...state,
         cart: { ...state.cart, paymentMethod: action.payload },

@@ -54,7 +54,7 @@ main {
 }
 
 .small-container {
-  max-width: 600px;
+  max-width: 700px;
 }
 
 .checkout-steps > div {
@@ -105,4 +105,33 @@ button.thumbnail {
   object-fit: cover;
   width: 200px;
   height: 200px;
+}
+
+.shipment-method {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.tariff-name {
+  font-size: 1.1rem;
+}
+
+.tariff-description {
+  font-size: 1rem;
+  color: #666;
+}
+
+.delivery-sum {
+  font-size: 1.1rem;
+}
+
+.delivery-time {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #999;
+}
+
+.continue-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
 }

@@ -19,7 +19,7 @@ const reducer = (state, action) => {
       {
         const password = {
           value: action.payload,
-          isValid: passwordRegexp.test(action.payload),
+          isValid: action.payload.length >= 6,
         };
         const confirmPassword = {
           ...state.reqFields.confirmPassword,
@@ -242,6 +242,7 @@ export default function SignupScreen() {
           <Form.Label>Email</Form.Label>
           <Form.Control
             type="text"
+            value={email.value}
             required
             isValid={email.isValid && !isEmailRegistered}
             isInvalid={!email.isValid || isEmailRegistered}
@@ -264,6 +265,7 @@ export default function SignupScreen() {
           <Form.Label>First Name</Form.Label>
           <Form.Control
             required
+            value={firstName.value}
             isValid={firstName.isValid}
             isInvalid={!firstName.isValid}
             onChange={(e) =>
@@ -275,6 +277,7 @@ export default function SignupScreen() {
           <Form.Label>Last Name</Form.Label>
           <Form.Control
             required
+            value={lastName.value}
             isValid={lastName.isValid}
             isInvalid={!lastName.isValid}
             onChange={(e) =>
@@ -297,6 +300,7 @@ export default function SignupScreen() {
           <Form.Control
             type="date"
             required
+            value={birthDate.value}
             isValid={birthDate.isValid}
             isInvalid={!birthDate.isValid}
             onChange={(e) =>
@@ -309,6 +313,7 @@ export default function SignupScreen() {
           <Form.Control
             type="password"
             required
+            value={password.value}
             isValid={password.isValid}
             isInvalid={!password.isValid}
             onChange={(e) => {
@@ -316,8 +321,7 @@ export default function SignupScreen() {
             }}
           />
           <Form.Control.Feedback type="invalid">
-            Password should has minimum 8 characters, at least one uppercase
-            letter, one lowercase letter and one number
+            Password should has minimum 6 characters
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="confirmPassword">
@@ -325,6 +329,7 @@ export default function SignupScreen() {
           <Form.Control
             type="password"
             required
+            value={confirmPassword.value}
             isValid={password.value !== '' && confirmPassword.isValid}
             isInvalid={!confirmPassword.isValid}
             onChange={(e) =>
