@@ -12,6 +12,8 @@ import axios from 'axios';
 import { getError } from '../../utils';
 import { toast } from 'react-toastify';
 
+//INTEGRATED
+
 export default function ShippingMethodsScreen() {
   const navigate = useNavigate();
 
@@ -33,52 +35,52 @@ export default function ShippingMethodsScreen() {
 
   useEffect(() => {
     const fetchShipmentMethods = async () => {
-      // try {
-      //   let requestBody = {
-      //     orderId: order.id,
-      //     toAddress: {
-      //       id: shippingAddress.id,
-      //       postalCode: shippingAddress.zip,
-      //       city: shippingAddress.city,
-      //       country: shippingAddress.country,
-      //       street: shippingAddress.street,
-      //       buildingNumber: shippingAddress.house,
-      //       apartmentNumber: shippingAddress.apartment,
-      //       entranceNumber: shippingAddress.entrance,
-      //     },
-      //   };
+      try {
+        let requestBody = {
+          orderId: order.id,
+          toAddress: {
+            id: shippingAddress.id,
+            postalCode: shippingAddress.zip,
+            city: shippingAddress.city,
+            country: shippingAddress.country,
+            street: shippingAddress.street,
+            buildingNumber: shippingAddress.house,
+            apartmentNumber: shippingAddress.apartment,
+            entranceNumber: shippingAddress.entrance,
+          },
+        };
 
-      //   const { data } = await axios.post('/v1/delivery/get', requestBody, {
-      //     headers: { Authorization: `Bearer ${userInfo.token}` },
-      //   });
+        const { data } = await axios.post('/v1/delivery/get', requestBody, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
 
-      //   setShipmentMethods(data.shipmentMethods);
-      // } catch (error) {
-      //   toast.error(getError(error));
-      // }
+        setShipmentMethods(data.shipmentMethods);
+      } catch (error) {
+        toast.error(getError(error));
+      }
 
       // MOCK
-      setShipmentMethods([
-        {
-          tariffCode: '1',
-          tariffName: 'test',
-          tariffDescription:
-            'tesddddd w3e 3we we we fwggerg3 rg we wgt3 3 g4g g33r g3',
-          deliveryMode: 1,
-          deliverySum: 100,
-          periodMin: 1,
-          periodMax: 2,
-        },
-        {
-          tariffCode: '2',
-          tariffName: 'test',
-          tariffDescription: 'test',
-          deliveryMode: 1,
-          deliverySum: 100,
-          periodMin: 1,
-          periodMax: 2,
-        },
-      ]);
+      // setShipmentMethods([
+      //   {
+      //     tariffCode: '1',
+      //     tariffName: 'test',
+      //     tariffDescription:
+      //       'tesddddd w3e 3we we we fwggerg3 rg we wgt3 3 g4g g33r g3',
+      //     deliveryMode: 1,
+      //     deliverySum: 100,
+      //     periodMin: 1,
+      //     periodMax: 2,
+      //   },
+      //   {
+      //     tariffCode: '2',
+      //     tariffName: 'test',
+      //     tariffDescription: 'test',
+      //     deliveryMode: 1,
+      //     deliverySum: 100,
+      //     periodMin: 1,
+      //     periodMax: 2,
+      //   },
+      // ]);
     };
 
     fetchShipmentMethods();
@@ -102,8 +104,14 @@ export default function ShippingMethodsScreen() {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         }
       );
+
+      ctxDispatch({
+        type: 'SAVE_SHIPPING_METHOD',
+        payload: selectedShipmentMethod,
+      });
     } catch (error) {
       toast.error(getError(error));
+      return;
     }
 
     navigate('/payment');

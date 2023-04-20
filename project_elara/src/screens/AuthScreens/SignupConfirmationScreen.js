@@ -39,7 +39,7 @@ export default function SignupConfirmationScreen() {
           <div class="bg-light p-5 rounded-lg m-3">
             <h1 className="display-4">Подтверждение Email</h1>
             <p className="lead">Спасибо за регистрацию!</p>
-            <hr class="my-4" />
+            <hr className="my-4" />
             <p className="lead">
               Для завершения процесса регистрации и подтверждения вашего адреса
               электронной почты, пожалуйста, нажмите на кнопку ниже.

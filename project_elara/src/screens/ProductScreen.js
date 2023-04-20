@@ -109,7 +109,7 @@ function ProductScreen() {
           <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
           <ListGroup.Item>
             <Row xs={1} md={2} className="g-2">
-              {[...product.pictures].map((img) => (
+              {product.pictures.map((img) => (
                 <Col key={img}>
                   <Card>
                     <Button

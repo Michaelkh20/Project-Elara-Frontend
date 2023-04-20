@@ -8,8 +8,10 @@ import CheckoutSteps from '../../components/CheckoutSteps';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
-import { getError } from '../../utils';
+import { addressToString, getError } from '../../utils';
 import { toast } from 'react-toastify';
+
+//INTEGRATED
 
 export default function ShippingAddressScreen() {
   const navigate = useNavigate();
@@ -150,10 +152,6 @@ export default function ShippingAddressScreen() {
       setApartment(selectedAddress.apartment);
       setEntrance(selectedAddress.entrance);
     }
-  };
-
-  const addressToString = (address) => {
-    return `${address.street}, ${address.house}, ${address.apartment}, ${address.entrance}, ${address.city}, ${address.zip}, ${address.country}`;
   };
 
   return (

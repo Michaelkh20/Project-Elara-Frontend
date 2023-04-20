@@ -43,7 +43,13 @@ function reducer(state, action) {
       return { ...state, cart: { ...state.cart, cartItems } };
     }
     case 'CART_CLEAR':
-      return { ...state, cart: { ...state.cart, cartItems: [] } };
+      localStorage.removeItem('cartItems');
+      localStorage.removeItem('order');
+      return {
+        ...state,
+        cart: { ...state.cart, cartItems: [], shippingMethod: null },
+        order: null,
+      };
     case 'USER_SIGNIN':
       localStorage.setItem('userInfo', JSON.stringify(action.payload));
       return { ...state, userInfo: action.payload };
@@ -55,7 +61,12 @@ function reducer(state, action) {
       return {
         ...state,
         userInfo: null,
-        cart: { cartItems: [], shippingAddress: {}, paymentMethod: '' },
+        cart: {
+          cartItems: [],
+          shippingAddress: {},
+          paymentMethod: '',
+          shippingMethod: null,
+        },
         order: null,
       };
     case 'SAVE_SHIPPING_ADDRESS':
@@ -67,6 +78,14 @@ function reducer(state, action) {
           shippingAddress: action.payload,
         },
       };
+    case 'SAVE_SHIPPING_METHOD':
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          shippingMethod: action.payload,
+        },
+      };
     case 'SAVE_PAYMENT_METHOD':
       localStorage.setItem('paymentMethod', action.payload);
 
@@ -74,7 +93,7 @@ function reducer(state, action) {
         ...state,
         cart: { ...state.cart, paymentMethod: action.payload },
       };
-    case 'ORDER_CREATE':
+    case 'ORDER_SET':
       localStorage.setItem('order', JSON.stringify(action.payload));
       return { ...state, order: action.payload };
     default:

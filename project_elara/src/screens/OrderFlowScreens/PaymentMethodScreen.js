@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button';
 import { Store } from '../../Store';
 import { useNavigate } from 'react-router-dom';
 
+//INTEGRATED
+
 export default function PaymentMethodScreen() {
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ export default function PaymentMethodScreen() {
     e.preventDefault();
 
     ctxDispatch({ type: 'SAVE_PAYMENT_METHOD', payload: paymentMethodName });
-    navigate('/placeorder');
+    navigate('/orderpayment');
   };
 
   return (

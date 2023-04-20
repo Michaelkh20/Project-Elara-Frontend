@@ -22,7 +22,7 @@ import SigninScreen from './screens/AuthScreens/SigninScreen';
 import ShippingAddressScreen from './screens/OrderFlowScreens/ShippingAddressScreen';
 import SignupScreen from './screens/AuthScreens/SignupScreen';
 import PaymentMethodScreen from './screens/OrderFlowScreens/PaymentMethodScreen';
-import PlaceOrderScreen from './screens/OrderFlowScreens/PlaceOrderScreen';
+import OrderPaymentScreen from './screens/OrderFlowScreens/OrderPaymentScreen';
 import OrderHistoryScreen from './screens/UserScreens/OrderHistoryScreen';
 import ProfileScreen from './screens/UserScreens/ProfileScreen';
 import Button from 'react-bootstrap/Button';
@@ -33,8 +33,8 @@ import SearchScreen from './screens/SearchScreen';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardScreen from './screens/AdminScreens/DashboardScreen';
 import AdminRoute from './components/AdminRoute';
-import ProductListScreen from './screens/AdminScreens/ProductListScreen';
-import ProductEditScreen from './screens/AdminScreens/ProductEditScreen';
+import ProductListScreen from './screens/AdminScreens/products/ProductListScreen';
+import ProductEditScreen from './screens/AdminScreens/products/ProductEditScreen';
 import OrderListScreen from './screens/AdminScreens/OrderListScreen';
 import UserListScreen from './screens/AdminScreens/UserListScreen';
 import UserEditScreen from './screens/AdminScreens/UserEditScreen';
@@ -44,6 +44,16 @@ import SignupConfirmationScreen from './screens/AuthScreens/SignupConfirmationSc
 import EmailSentScreen from './screens/AuthScreens/EmailSentScreen';
 import OrderScreen from './screens/OrderFlowScreens/OrderScreen';
 import ShippingMethodsScreen from './screens/OrderFlowScreens/ShippingMethodsScreen';
+import ProductCreateScreen from './screens/AdminScreens/products/ProductCreateScreen';
+import SportListScreen from './screens/AdminScreens/sport/SportListScreen';
+import SportCreateScreen from './screens/AdminScreens/sport/SportCreateScreen';
+import SportEditScreen from './screens/AdminScreens/sport/SportEditScreen';
+import FeatureListScreen from './screens/AdminScreens/features/FeatureListScreen';
+import FeatureCreateScreen from './screens/AdminScreens/features/FeatureCreateScreen';
+import FeatureEditScreen from './screens/AdminScreens/features/FeatureEditScreen';
+import ColorListScreen from './screens/AdminScreens/colors/ColorListScreen';
+import ColorCreateScreen from './screens/AdminScreens/colors/ColorCreateScreen';
+import ColorEditScreen from './screens/AdminScreens/colors/ColorEditScreen';
 
 function App() {
   // const navigate = useNavigate();
@@ -105,17 +115,20 @@ function App() {
                   )}
                   {userInfo && userInfo.role === 'ADMIN' && (
                     <NavDropdown title="Admin" id="admin-nav-dropdown">
-                      <LinkContainer to="/admin/dashboard">
-                        <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                      </LinkContainer>
                       <LinkContainer to="/admin/products">
                         <NavDropdown.Item>Products</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/orders">
                         <NavDropdown.Item>Orders</NavDropdown.Item>
                       </LinkContainer>
-                      <LinkContainer to="/admin/users">
-                        <NavDropdown.Item>Users</NavDropdown.Item>
+                      <LinkContainer to="/admin/sports">
+                        <NavDropdown.Item>Sports</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/admin/features">
+                        <NavDropdown.Item>Features</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/admin/colors">
+                        <NavDropdown.Item>Colors</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
                   )}
@@ -154,7 +167,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/placeorder" element={<PlaceOrderScreen />} />
+              <Route path="/orderpayment" element={<OrderPaymentScreen />} />
               <Route
                 path="/order/:id"
                 element={
@@ -190,14 +203,6 @@ function App() {
                 }
               />
               <Route
-                path="/admin/products"
-                element={
-                  <AdminRoute>
-                    <ProductListScreen />
-                  </AdminRoute>
-                }
-              />
-              <Route
                 path="/admin/orders"
                 element={
                   <AdminRoute>
@@ -214,10 +219,98 @@ function App() {
                 }
               />
               <Route
+                path="/admin/products"
+                element={
+                  <AdminRoute>
+                    <ProductListScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/product/create"
+                element={
+                  <AdminRoute>
+                    <ProductCreateScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
                 path="/admin/product/:id"
                 element={
                   <AdminRoute>
                     <ProductEditScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/sports"
+                element={
+                  <AdminRoute>
+                    <SportListScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/sport/create"
+                element={
+                  <AdminRoute>
+                    <SportCreateScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/sport/:id"
+                element={
+                  <AdminRoute>
+                    <SportEditScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/features"
+                element={
+                  <AdminRoute>
+                    <FeatureListScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/feature/create"
+                element={
+                  <AdminRoute>
+                    <FeatureCreateScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/feature/:id"
+                element={
+                  <AdminRoute>
+                    <FeatureEditScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/colors"
+                element={
+                  <AdminRoute>
+                    <ColorListScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/color/create"
+                element={
+                  <AdminRoute>
+                    <ColorCreateScreen />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/color/:id"
+                element={
+                  <AdminRoute>
+                    <ColorEditScreen />
                   </AdminRoute>
                 }
               />

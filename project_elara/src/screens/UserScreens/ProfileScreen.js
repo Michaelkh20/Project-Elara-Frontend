@@ -270,8 +270,8 @@ export default function ProfileScreen() {
         '/api/v1/users/change-password',
         {
           userId: userInfo.id,
-          oldPassword,
-          newPassword,
+          oldPassword: oldPassword.value,
+          newPassword: newPassword.value,
         },
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
@@ -394,7 +394,7 @@ export default function ProfileScreen() {
         </Form.Group>
         <div className="mb-3">
           <Button type="submit" disabled={!isForm0Valid}>
-            Sign Up
+            Update
           </Button>
         </div>
       </Form>

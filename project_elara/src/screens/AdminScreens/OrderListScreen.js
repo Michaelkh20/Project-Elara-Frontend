@@ -7,7 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getError } from '../../utils';
 import Button from 'react-bootstrap/Button';
+import Pagination from 'react-bootstrap/Pagination';
 import { toast } from 'react-toastify';
+
+// INTEGRATED
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -17,7 +20,9 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        orders: action.payload,
+        orders: action.payload.content,
+        page: action.payload.pageable.pageNumber + 1,
+        totalPages: action.payload.totalPages,
       };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
@@ -29,10 +34,14 @@ const reducer = (state, action) => {
       return { ...state, loadingDelete: false, successDelete: false };
     case 'DELETE_RESET':
       return { ...state, loadingDelete: false, successDelete: false };
+    case 'PAGE_CHANGE':
+      return { ...state, page: action.payload };
     default:
       return state;
   }
 };
+
+const pageSize = 10;
 
 export default function OrderListScreen() {
   const navigate = useNavigate();
@@ -40,20 +49,27 @@ export default function OrderListScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [{ loading, error, orders, loadingDelete, successDelete }, dispatch] =
-    useReducer(reducer, {
-      loading: true,
-      error: '',
-    });
+  const [
+    { loading, error, orders, page, totalPages, loadingDelete, successDelete },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    error: '',
+    page: 1,
+    totalPages: 1,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
 
-        const { data } = await axios.get('/api/orders', {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        });
+        const { data } = await axios.get(
+          `/v1/orders/?pageNumber=${page - 1}&size=${pageSize}`,
+          {
+            headers: { authorization: `Bearer ${userInfo.token}` },
+          }
+        );
 
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
@@ -66,7 +82,7 @@ export default function OrderListScreen() {
     } else {
       fetchData();
     }
-  }, [userInfo, successDelete]);
+  }, [userInfo, successDelete, page]);
 
   const deleteHandler = async (order) => {
     if (!window.confirm('Are you sure to delete?')) {
@@ -76,9 +92,13 @@ export default function OrderListScreen() {
     try {
       dispatch({ type: 'DELETE_REQUEST' });
 
-      await axios.delete(`/api/orders/${order._id}`, {
-        headers: { authorization: `Bearer ${userInfo.token}` },
-      });
+      await axios.put(
+        `/v1/orders/change-status?orderId=${order.id}&status=CANCELLED`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
 
       dispatch({ type: 'DELETE_SUCCESS' });
       toast.success('Order deleted successfully');
@@ -106,31 +126,25 @@ export default function OrderListScreen() {
               <tr>
                 <th>ID</th>
                 <th>USER</th>
-                <th>DATE</th>
-                <th>TOTAL</th>
-                <th>PAID</th>
-                <th>DELIVERED</th>
+                <th>TOTAL WITHOUT DISCOUNT</th>
+                <th>TOTAL WITH DISCOUNT</th>
+                <th>STATUS</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order._id}>
-                  <td>{order._id}</td>
-                  <td>{order.user ? order.user.name : 'DELETED USER'}</td>
-                  <td>{order.createdAt.substring(0, 10)}</td>
-                  <td>${order.totalPrice.toFixed(2)}</td>
-                  <td>{order.isPaid ? order.paidAt.substring(0, 10) : 'No'}</td>
-                  <td>
-                    {order.isDelivered
-                      ? order.deliveredAt.substring(0, 10)
-                      : 'No'}
-                  </td>
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.userId}</td>
+                  <td>${order.totalWithoutDiscount.toFixed(2)}</td>
+                  <td>${order.totalWithDiscount.toFixed(2)}</td>
+                  <td>{order.status}</td>
                   <td>
                     <Button
                       type="button"
                       variant="light"
-                      onClick={() => navigate(`/order/${order._id}`)}
+                      onClick={() => navigate(`/order/${order.id}`)}
                     >
                       Details
                     </Button>
@@ -147,6 +161,23 @@ export default function OrderListScreen() {
               ))}
             </tbody>
           </table>
+          <div>
+            <Pagination>
+              {Array(totalPages)
+                .fill(0)
+                .map((_, i) => (
+                  <Pagination.Item
+                    key={i + 1}
+                    active={i + 1 === page}
+                    onClick={() =>
+                      dispatch({ type: 'PAGE_CHANGE', payload: i + 1 })
+                    }
+                  >
+                    {i + 1}
+                  </Pagination.Item>
+                ))}
+            </Pagination>
+          </div>
         </>
       )}
     </div>
