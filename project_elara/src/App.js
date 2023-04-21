@@ -36,8 +36,6 @@ import AdminRoute from './components/AdminRoute';
 import ProductListScreen from './screens/AdminScreens/products/ProductListScreen';
 import ProductEditScreen from './screens/AdminScreens/products/ProductEditScreen';
 import OrderListScreen from './screens/AdminScreens/OrderListScreen';
-import UserListScreen from './screens/AdminScreens/UserListScreen';
-import UserEditScreen from './screens/AdminScreens/UserEditScreen';
 import ForgetPasswordScreen from './screens/AuthScreens/ForgetPasswordScreen';
 import ResetPasswordScreen from './screens/AuthScreens/ResetPasswordScreen';
 import SignupConfirmationScreen from './screens/AuthScreens/SignupConfirmationScreen';
@@ -194,27 +192,19 @@ function App() {
                 element={<ShippingMethodsScreen />}
               />
               {/* Admin Routes */}
-              <Route
+              {/* <Route
                 path="/admin/dashboard"
                 element={
                   <AdminRoute>
                     <DashboardScreen />
                   </AdminRoute>
                 }
-              />
+              /> */}
               <Route
                 path="/admin/orders"
                 element={
                   <AdminRoute>
                     <OrderListScreen />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/users"
-                element={
-                  <AdminRoute>
-                    <UserListScreen />
                   </AdminRoute>
                 }
               />
@@ -311,14 +301,6 @@ function App() {
                 element={
                   <AdminRoute>
                     <ColorEditScreen />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/user/:id"
-                element={
-                  <AdminRoute>
-                    <UserEditScreen />
                   </AdminRoute>
                 }
               />

@@ -293,24 +293,36 @@ export default function ProductCreateScreen() {
         <Form.Group className="mb-3" controlId="brand">
           <Form.Label>Brand</Form.Label>
           <Form.Select
-            onChange={(e) => setBrand(e.target.value)}
+            onChange={(e) => e.target.value && setBrand(e.target.value)}
             required
             value={brand}
           >
+            <option key="" value="">
+              Select brand
+            </option>
             {brands.map((brand) => (
-              <option value={brand}>{brand}</option>
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
             ))}
           </Form.Select>
         </Form.Group>
         <Form.Group className="mb-3" controlId="countryOfOrigin">
           <Form.Label>Country of origin</Form.Label>
           <Form.Select
-            onChange={(e) => setCountryOfOrigin(e.target.value)}
+            onChange={(e) =>
+              e.target.value && setCountryOfOrigin(e.target.value)
+            }
             required
             value={countryOfOrigin}
           >
+            <option key="" value="">
+              Country
+            </option>
             {countries.map((country) => (
-              <option value={country}>{country}</option>
+              <option key={country} value={country}>
+                {country}
+              </option>
             ))}
           </Form.Select>
         </Form.Group>
@@ -318,36 +330,51 @@ export default function ProductCreateScreen() {
           <Form.Group as={Col} className="mb-3" controlId="sizeUS">
             <Form.Label>Size US</Form.Label>
             <Form.Select
-              onChange={(e) => setSizeUS(e.target.value)}
+              onChange={(e) => e.target.value && setSizeUS(e.target.value)}
               required
               value={sizeUS}
             >
+              <option key="" value="">
+                Select US size
+              </option>
               {sizesUS.map((size) => (
-                <option value={size}>{size}</option>
+                <option key={size} value={size}>
+                  {size}
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
           <Form.Group as={Col} className="mb-3" controlId="sizeEUR">
             <Form.Label>Size EUR</Form.Label>
             <Form.Select
-              onChange={(e) => setSizeEUR(e.target.value)}
+              onChange={(e) => e.target.value && setSizeEUR(e.target.value)}
               required
               value={sizeEUR}
             >
+              <option key="" value="">
+                Select EUR size
+              </option>
               {sizesEUR.map((size) => (
-                <option value={size}>{size}</option>
+                <option key={size} value={size}>
+                  {size}
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
           <Form.Group as={Col} className="mb-3" controlId="sizeUK">
             <Form.Label>Size UK</Form.Label>
             <Form.Select
-              onChange={(e) => setSizeUK(e.target.value)}
+              onChange={(e) => e.target.value && setSizeUK(e.target.value)}
               required
               value={sizeUK}
             >
+              <option key="" value="">
+                Select UK size
+              </option>
               {sizesUK.map((size) => (
-                <option value={size}>{size}</option>
+                <option key={size} value={size}>
+                  {size}
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
@@ -370,8 +397,13 @@ export default function ProductCreateScreen() {
             ))}
           </div>
           <Form.Select onChange={sportsSelectHandler}>
+            <option key="" value="">
+              Select sports
+            </option>
             {sports.map((sport) => (
-              <option value={sport.id}>{sport.name}</option>
+              <option key={sport.id} value={sport.id}>
+                {sport.name}
+              </option>
             ))}
           </Form.Select>
         </Form.Group>
@@ -408,13 +440,13 @@ export default function ProductCreateScreen() {
             })}
           </div>
           <Form.Select onChange={colorsSelectHandler}>
-            <option value={2}>
-              <Row>
-                <Col md={'auto'} styles={{ backgroundColor: '#00FF04' }}></Col>
-              </Row>
+            <option key="" value="">
+              Select colors
             </option>
             {colors.map((color) => (
-              <option value={color.id}>{color.name}</option>
+              <option key={color.id} value={color.id}>
+                {color.name}
+              </option>
             ))}
           </Form.Select>
         </Form.Group>
@@ -436,8 +468,13 @@ export default function ProductCreateScreen() {
             ))}
           </div>
           <Form.Select onChange={featuresSelectHandler}>
+            <option key="" value="">
+              Select features
+            </option>
             {features.map((feature) => (
-              <option value={feature.id}>{feature.name}</option>
+              <option key={feature.id} value={feature.id}>
+                {feature.name}
+              </option>
             ))}
           </Form.Select>
         </Form.Group>

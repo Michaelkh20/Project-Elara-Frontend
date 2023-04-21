@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -44,14 +44,33 @@ export default function OrderScreen() {
     error: '',
   });
 
+  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
+
+  const [totalWithoutDiscount, setTotalWithoutDiscount] = useState(0);
+  const [totalWithDiscount, setTotalWithDiscount] = useState(0);
+  const [shippingPrice, setShippingPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalWeight, setTotalWeight] = useState(0);
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
 
-        const { data } = await axios.get(`/api/orders/${orderId}`, {
+        const { data } = await axios.get(`/api/v1/orders/${orderId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+
+        setTotalWithoutDiscount(round2(data.totalWithoutDiscount));
+        setTotalWithDiscount(round2(data.totalWithDiscount));
+        setShippingPrice(
+          round2(data.shipmentDetails.shipmentMethod.deliverySum)
+        );
+        setTotalPrice(
+          data.totalWithDiscount +
+            data.shipmentDetails.shipmentMethod.deliverySum
+        );
+        setTotalWeight(data.totalWeight);
 
         data.positions = data.positions.map(async (position) => {
           try {
@@ -92,7 +111,7 @@ export default function OrderScreen() {
 
     try {
       const { data } = await axios.put(
-        `/v1/orders/change-status?orderId=${order.id}&status=${nextStatus}`,
+        `/api/v1/orders/change-status?orderId=${order.id}&status=${nextStatus}`,
         {},
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
@@ -107,7 +126,7 @@ export default function OrderScreen() {
   }
 
   function orderAddressToString({ shipmentDetails: { toAddress } }) {
-    return `${toAddress.entranceNumber}, ${toAddress.buildingNumber}, ${toAddress.apartmentNumber}, ${toAddress.entrance}, ${toAddress.city}, ${toAddress.postalCode}, ${toAddress.country}`;
+    return `${toAddress.entranceNumber}, ${toAddress.buildingNumber}, ${toAddress.apartmentNumber}, ${toAddress.entranceNumber}, ${toAddress.city}, ${toAddress.postalCode}, ${toAddress.country}`;
   }
 
   function getAdminButtonText(status) {
@@ -140,6 +159,7 @@ export default function OrderScreen() {
               <Card.Title>Shipping</Card.Title>
               <Card.Text>
                 <strong>Address: </strong> {orderAddressToString(order)}
+                <br />
                 <strong>Shipping method: </strong>{' '}
                 {order.shipmentDetails.shipmentMethod.tariffName}
               </Card.Text>
@@ -197,26 +217,26 @@ export default function OrderScreen() {
           </Card>
         </Col>
         <Col md={4}>
-          <Card className="mb-3">
+          <Card>
             <Card.Body>
               <Card.Title>Order summary</Card.Title>
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>Items</Col>
-                    <Col>${order.itemsPrice.toFixed(2)}</Col>
+                    <Col>Total without discount</Col>
+                    <Col>${totalWithoutDiscount.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Total with discount</Col>
+                    <Col>${totalWithDiscount.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
                     <Col>Shipping</Col>
-                    <Col>${order.shippingPrice.toFixed(2)}</Col>
-                  </Row>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Tax</Col>
-                    <Col>${order.taxPrice.toFixed(2)}</Col>
+                    <Col>${shippingPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
@@ -225,8 +245,14 @@ export default function OrderScreen() {
                       <strong>Order Total</strong>
                     </Col>
                     <Col>
-                      <strong>${order.totalPrice.toFixed(2)}</strong>
+                      <strong>${totalPrice.toFixed(2)}</strong>
                     </Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Total weight</Col>
+                    <Col>{totalWeight.toFixed(2)} kg</Col>
                   </Row>
                 </ListGroup.Item>
                 {userInfo.role === 'ADMIN' &&

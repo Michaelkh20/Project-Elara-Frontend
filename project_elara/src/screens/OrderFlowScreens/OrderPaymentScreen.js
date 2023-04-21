@@ -20,7 +20,7 @@ const reducer = (state, action) => {
     case 'FETCH_REQUEST':
       return { ...state, loading: true, error: '' };
     case 'FETCH_SUCCESS':
-      return { ...state, loading: false, order: action.payload, error: '' };
+      return { ...state, loading: false, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
     case 'PAY_REQUEST':
@@ -64,7 +64,7 @@ export default function OrderPaymentScreen() {
   const totalWithoutDiscount = round2(order.totalWithoutDiscount);
   const totalWithDiscount = round2(order.totalWithDiscount);
   const shippingPrice = round2(cart.shippingMethod.deliverySum);
-  const totalPrice = cart.totalWithDiscount + cart.shippingPrice;
+  const totalPrice = order.totalWithDiscount + cart.shippingMethod.deliverySum;
   const totalWeight = order.totalWeight;
 
   useEffect(() => {
@@ -90,13 +90,15 @@ export default function OrderPaymentScreen() {
       try {
         dispatch({ type: 'PAY_REQUEST' });
 
+        console.log(details);
+
         await axios.post(
           `/api/v1/payment/`,
           {
             id: details.id,
             orderId: order.id,
             status: details.status,
-            userEmail: details.email_address,
+            userEmail: details.payer.email_address,
             updateTime: details.update_time,
           },
           {
@@ -105,7 +107,6 @@ export default function OrderPaymentScreen() {
         );
 
         dispatch({ type: 'PAY_SUCCESS' });
-        ctxDispatch({ type: 'CART_CLEAR' });
 
         toast.success('Order is paid');
       } catch (error) {
@@ -124,19 +125,21 @@ export default function OrderPaymentScreen() {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
 
-        const { data } = await axios.get(`/api/orders/${order.id}`, {
+        const { data } = await axios.get(`/api/v1/orders/${order.id}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
 
-        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+        dispatch({ type: 'FETCH_SUCCESS' });
         ctxDispatch({ type: 'ORDER_SET', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
       }
     };
 
+    console.log('erghvuerygvhierugvferu');
     if (successPay) {
       navigate(`/order/${order.id}`);
+      ctxDispatch({ type: 'CART_CLEAR' });
     } else {
       fetchOrder();
 
@@ -154,7 +157,7 @@ export default function OrderPaymentScreen() {
 
       loadPaypalScript();
     }
-  }, [order, userInfo, navigate, paypalDispatch, successPay, ctxDispatch]);
+  }, [userInfo, navigate, paypalDispatch, successPay, ctxDispatch, order.id]);
 
   return loading ? (
     <LoadingBox />
@@ -175,6 +178,7 @@ export default function OrderPaymentScreen() {
               <Card.Text>
                 <strong>Address: </strong>{' '}
                 {addressToString(cart.shippingAddress)}
+                <br />
                 <strong>Shipping method: </strong>{' '}
                 {cart.shippingMethod.tariffName}
               </Card.Text>
@@ -256,7 +260,7 @@ export default function OrderPaymentScreen() {
                     <Col>{totalWeight.toFixed(2)} kg</Col>
                   </Row>
                 </ListGroup.Item>
-                {isOrderPaid(order) && (
+                {!isOrderPaid(order) && (
                   <ListGroup.Item>
                     {isPending ? (
                       <LoadingBox />

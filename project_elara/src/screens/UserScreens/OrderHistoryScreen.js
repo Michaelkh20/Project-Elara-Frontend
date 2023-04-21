@@ -57,7 +57,7 @@ export default function OrderHistoryScreen() {
         dispatch({ type: 'FETCH_REQUEST' });
 
         const { data } = await axios.get(
-          `/api/v1/orders/${userInfo.id}?pageNumber=${
+          `/api/v1/orders/user/${userInfo.id}?pageNumber=${
             page - 1
           }&pageSize=${pageSize}`,
           {

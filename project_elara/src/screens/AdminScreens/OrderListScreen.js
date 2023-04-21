@@ -65,7 +65,7 @@ export default function OrderListScreen() {
         dispatch({ type: 'FETCH_REQUEST' });
 
         const { data } = await axios.get(
-          `/v1/orders/?pageNumber=${page - 1}&size=${pageSize}`,
+          `/api/v1/orders/?pageNumber=${page - 1}&size=${pageSize}`,
           {
             headers: { authorization: `Bearer ${userInfo.token}` },
           }
@@ -93,7 +93,7 @@ export default function OrderListScreen() {
       dispatch({ type: 'DELETE_REQUEST' });
 
       await axios.put(
-        `/v1/orders/change-status?orderId=${order.id}&status=CANCELLED`,
+        `/api/v1/orders/change-status?orderId=${order.id}&status=CANCELLED`,
         {},
         {
           headers: { authorization: `Bearer ${userInfo.token}` },

@@ -50,7 +50,7 @@ export default function ShippingMethodsScreen() {
           },
         };
 
-        const { data } = await axios.post('/v1/delivery/get', requestBody, {
+        const { data } = await axios.post('/api/v1/delivery/get', requestBody, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
 
@@ -90,12 +90,14 @@ export default function ShippingMethodsScreen() {
     e.preventDefault();
 
     const selectedShipmentMethod = shipmentMethods.find(
-      (method) => method.tariffCode === selectedTariffCode
+      (method) => method.tariffCode === Number(selectedTariffCode)
     );
+
+    console.log(shipmentMethods);
 
     try {
       await axios.put(
-        '/v1/delivery/select',
+        '/api/v1/delivery/select',
         {
           orderId: order.id,
           shipmentMethod: selectedShipmentMethod,

@@ -87,17 +87,19 @@ function HomeScreen() {
               ))}
             </Row>
             <Pagination>
-              {Array(totalPages).map((_, i) => (
-                <Pagination.Item
-                  key={i + 1}
-                  active={i + 1 === page}
-                  onClick={() =>
-                    dispatch({ type: 'PAGE_CHANGE', payload: i + 1 })
-                  }
-                >
-                  {i + 1}
-                </Pagination.Item>
-              ))}
+              {Array(totalPages)
+                .fill(0)
+                .map((_, i) => (
+                  <Pagination.Item
+                    key={i + 1}
+                    active={i + 1 === page}
+                    onClick={() =>
+                      dispatch({ type: 'PAGE_CHANGE', payload: i + 1 })
+                    }
+                  >
+                    {i + 1}
+                  </Pagination.Item>
+                ))}
             </Pagination>
           </>
         )}
